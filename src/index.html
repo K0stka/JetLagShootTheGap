@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" class="dark bg-background text-foreground dark:bg-foreground dark:text-background">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>JetLag: Shoot the Gap</title>
+        <link href="dist/index.css" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+        <style>
+            html {
+                font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+            }
+        </style>
+    </head>
+
+    <body class="min-h-screen flex flex-col transition-colors duration-300 bg-background text-foreground dark:bg-foreground dark:text-background">
+        <main class="flex-1 flex flex-col items-center justify-center px-4 py-12">
+            <div class="w-full max-w-6xl bg-card rounded-xl text-center shadow-lg border border-border p-10 pb-6 dark:bg-zinc-900 dark:border-zinc-800 transition-colors duration-300">
+                <h2 class="text-2xl font-semibold text-center">JetLag: The Game - Season 14</h2>
+                <h4 class="mb-8 text-center text-lg text-gray-500">Shoot the Gap analysis (from the perspective of the Snaker)</h4>
+                <form class="flex flex-col md:flex-row gap-6 mb-6 items-center justify-center">
+                    <div class="w-72 whitespace-nowrap">
+                        <label for="size" class="block text-sm font-medium mb-1 whitespace-nowrap">Maximum expected # of items:
+                            <span id="size-value" class="font-semibold">20</span></label>
+                        <input type="range" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-accent dark:bg-zinc-800" min="5" max="100" value="20" id="size" />
+                    </div>
+                    <div class="w-72 whitespace-nowrap">
+                        <label for="prob" class="block text-sm font-medium mb-1 whitespace-nowrap">Probability of collecting an item:
+                            <span id="prob-value" class="font-semibold">90%</span></label>
+                        <input type="range" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-accent dark:bg-zinc-800" min="0" max="100" step="1" value="90" id="prob" />
+                    </div>
+                    <div class="w-72 whitespace-nowrap">
+                        <label for="model" class="block text-sm font-medium mb-1 whitespace-nowrap">Probability model:</label>
+                        <select id="model" class="w-full rounded-lg border border-border bg-white dark:bg-zinc-800 dark:border-zinc-700 px-2 py-1 text-sm">
+                            <option value="binomial">Binomial</option>
+                            <option value="exponential">Exponential decay</option>
+                        </select>
+                    </div>
+                </form>
+                <div class="flex flex-col md:flex-row gap-6 items-start justify-center">
+                    <div id="chart-container" class="flex-[2] min-w-0 bg-white dark:bg-zinc-900 border border-border rounded-lg shadow-lg dark:border-zinc-800 p-2 flex flex-col justify-center">
+                        <h4 class="mb-2 text-lg font-semibold">Probabilities of the result for each possible move</h4>
+                        <canvas id="myChart" width="700" height="320"></canvas>
+                    </div>
+                    <div id="y-prob-container" class="flex-1 min-w-0 bg-white dark:bg-zinc-900 border border-border rounded-lg shadow-lg dark:border-zinc-800 p-2 flex flex-col justify-center">
+                        <h4 class="mb-2 text-lg font-semibold">Probability blocker takes n items</h4>
+                        <canvas id="yProbChart" width="350" height="320"></canvas>
+                    </div>
+                </div>
+                <h3 class="mt-6 text-base font-medium text-lime-600 dark:text-lime-300 bg-lime-100 dark:bg-lime-900/30 rounded-lg px-4 py-2 inline-block shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-300 hover:bg-lime-200 dark:hover:bg-lime-800/40 mx-auto text-center" id="legend"></h3>
+            </div>
+        </main>
+        <button id="dark-toggle" class="fixed left-4 bottom-4 z-50 rounded-lg size-12 bg-gray-300 text-gray-700 shadow-lg hover:bg-gray-400 focus:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:bg-zinc-800 dark:text-gray-200 dark:hover:bg-zinc-700 dark:focus:bg-zinc-900 flex items-center justify-center" aria-label="Toggle Light/Dark mode">
+            <span id="icon-sun" style="display: none !important;" class="flex items-center justify-center size-8">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-icon lucide-sun">
+                    <circle cx="12" cy="12" r="4" />
+                    <path d="M12 2v2" />
+                    <path d="M12 20v2" />
+                    <path d="m4.93 4.93 1.41 1.41" />
+                    <path d="m17.66 17.66 1.41 1.41" />
+                    <path d="M2 12h2" />
+                    <path d="M20 12h2" />
+                    <path d="m6.34 17.66-1.41 1.41" />
+                    <path d="m19.07 4.93-1.41 1.41" />
+                </svg>
+            </span>
+            <span id="icon-moon" style="display: none !important;" class="flex items-center justify-center size-8">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon-icon lucide-moon">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                </svg>
+            </span>
+        </button>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="index.js"></script>
+    </body>
+
+</html>
