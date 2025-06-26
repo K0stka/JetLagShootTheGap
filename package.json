@@ -4,9 +4,8 @@
 	"description": "",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"build:css": "tailwindcss -i ./src/input.css -o ./dist/index.css --minify",
-		"build:minify": "pnpm exec node minify.js",
-		"build": "pnpm run build:css && pnpm run build:minify"
+		"dev": "tailwindcss -i ./src/tailwind.css -o ./dist/bundle.css --watch -c tailwind.config.js",
+		"build": "tailwindcss -i ./src/tailwind.css -o ./dist/bundle.css -c tailwind.config.js --minify && node build.mjs"
 	},
 	"keywords": [],
 	"author": "",
@@ -14,8 +13,8 @@
 	"type": "commonjs",
 	"devDependencies": {
 		"autoprefixer": "^10.4.21",
+		"esbuild": "^0.25.5",
 		"html-minifier-terser": "^7.2.0",
-		"postcss": "^8.5.6",
 		"tailwindcss": "^4.1.10",
 		"terser": "^5.43.1"
 	},

@@ -1,78 +1,541 @@
 <!DOCTYPE html>
-<html lang="en" class="dark bg-background text-foreground dark:bg-foreground dark:text-background">
+<html
+	lang="en"
+	class="dark bg-background text-foreground dark:bg-foreground dark:text-background">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0" />
+		<title>JetLag: Shoot the Gap</title>
+		<link
+			href="../dist/bundle.css"
+			rel="stylesheet" />
+		<link
+			href="index.css"
+			rel="stylesheet" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+			rel="stylesheet" />
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script
+			type="module"
+			src="js/index.js"></script>
+	</head>
 
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>JetLag: Shoot the Gap</title>
-        <link href="index.css" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-        <style>
-            html {
-                font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
-            }
-        </style>
-    </head>
-
-    <body class="min-h-screen flex flex-col transition-colors duration-300 bg-background text-foreground dark:bg-foreground dark:text-background">
-        <main class="flex-1 flex flex-col items-center justify-center px-4 py-12">
-            <div class="w-full max-w-6xl bg-card rounded-xl text-center shadow-lg border border-border p-10 pb-6 dark:bg-zinc-900 dark:border-zinc-800 transition-colors duration-300">
-                <h2 class="text-2xl font-semibold text-center">JetLag: The Game - Season 14</h2>
-                <h4 class="mb-8 text-center text-lg text-gray-500">Shoot the Gap analysis (from the perspective of the Snaker)</h4>
-                <form class="flex flex-col md:flex-row gap-6 mb-6 items-center justify-center">
-                    <div class="w-72 whitespace-nowrap">
-                        <label for="size" class="block text-sm font-medium mb-1 whitespace-nowrap">Maximum expected # of items:
-                            <span id="size-value" class="font-semibold">20</span></label>
-                        <input type="range" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-accent dark:bg-zinc-800" min="5" max="100" value="20" id="size" />
-                    </div>
-                    <div class="w-72 whitespace-nowrap">
-                        <label for="prob" class="block text-sm font-medium mb-1 whitespace-nowrap">Probability of collecting an item:
-                            <span id="prob-value" class="font-semibold">90%</span></label>
-                        <input type="range" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-accent dark:bg-zinc-800" min="0" max="100" step="1" value="90" id="prob" />
-                    </div>
-                    <div class="w-72 whitespace-nowrap">
-                        <label for="model" class="block text-sm font-medium mb-1 whitespace-nowrap">Probability model:</label>
-                        <select id="model" class="w-full rounded-lg border border-border bg-white dark:bg-zinc-800 dark:border-zinc-700 px-2 py-1 text-sm">
-                            <option value="binomial">Binomial</option>
-                            <option value="exponential">Exponential decay</option>
-                        </select>
-                    </div>
-                </form>
-                <div class="flex flex-col md:flex-row gap-6 items-start justify-center">
-                    <div id="chart-container" class="flex-[2] min-w-0 bg-white dark:bg-zinc-900 border border-border rounded-lg shadow-lg dark:border-zinc-800 p-2 flex flex-col justify-center">
-                        <h4 class="mb-2 text-lg font-semibold">Probabilities of the result for each possible move</h4>
-                        <canvas id="myChart" width="700" height="320"></canvas>
-                    </div>
-                    <div id="y-prob-container" class="flex-1 min-w-0 bg-white dark:bg-zinc-900 border border-border rounded-lg shadow-lg dark:border-zinc-800 p-2 flex flex-col justify-center">
-                        <h4 class="mb-2 text-lg font-semibold">Probability blocker takes n items</h4>
-                        <canvas id="yProbChart" width="350" height="320"></canvas>
-                    </div>
-                </div>
-                <h3 class="mt-6 text-base font-medium text-lime-600 dark:text-lime-300 bg-lime-100 dark:bg-lime-900/30 rounded-lg px-4 py-2 inline-block shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-300 hover:bg-lime-200 dark:hover:bg-lime-800/40 mx-auto text-center" id="legend"></h3>
-            </div>
-        </main>
-        <button id="dark-toggle" class="fixed left-4 bottom-4 z-50 rounded-lg size-12 bg-gray-300 text-gray-700 shadow-lg hover:bg-gray-400 focus:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:bg-zinc-800 dark:text-gray-200 dark:hover:bg-zinc-700 dark:focus:bg-zinc-900 flex items-center justify-center" aria-label="Toggle Light/Dark mode">
-            <span id="icon-sun" style="display: none !important;" class="flex items-center justify-center size-8">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-icon lucide-sun">
-                    <circle cx="12" cy="12" r="4" />
-                    <path d="M12 2v2" />
-                    <path d="M12 20v2" />
-                    <path d="m4.93 4.93 1.41 1.41" />
-                    <path d="m17.66 17.66 1.41 1.41" />
-                    <path d="M2 12h2" />
-                    <path d="M20 12h2" />
-                    <path d="m6.34 17.66-1.41 1.41" />
-                    <path d="m19.07 4.93-1.41 1.41" />
-                </svg>
-            </span>
-            <span id="icon-moon" style="display: none !important;" class="flex items-center justify-center size-8">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon-icon lucide-moon">
-                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-                </svg>
-            </span>
-        </button>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="index.js"></script>
-    </body>
-
+	<body
+		class="min-h-screen flex flex-col transition-colors duration-300 bg-background text-foreground dark:bg-foreground dark:text-background">
+		<main class="flex-1 flex flex-col items-center justify-center px-4 py-12">
+			<div
+				class="main-card w-full max-w-6xl bg-card rounded-xl text-center shadow-lg border border-border p-10 pb-6 dark:bg-zinc-900 dark:border-zinc-800 transition-colors duration-300">
+				<h2 class="text-2xl font-semibold text-center">JetLag: The Game - Season 14</h2>
+				<h4 class="mb-8 text-center text-lg text-gray-500"
+					>Shoot the Gap analysis (from the perspective of the Snaker)</h4
+				>
+				<form class="flex flex-col md:flex-row gap-6 mb-6 items-center justify-center">
+					<div class="w-72 whitespace-nowrap">
+						<label
+							for="size"
+							class="block text-sm font-medium mb-1 whitespace-nowrap"
+							>Maximum expected # of items:
+							<span
+								id="size-value"
+								class="font-semibold"
+								>20</span
+							></label
+						>
+						<input
+							type="range"
+							class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-500 dark:bg-zinc-800"
+							min="5"
+							max="100"
+							value="20"
+							id="size" />
+					</div>
+					<div class="w-72 whitespace-nowrap">
+						<label
+							for="prob"
+							class="block text-sm font-medium mb-1 whitespace-nowrap"
+							>Probability of collecting an item:
+							<span
+								id="prob-value"
+								class="font-semibold"
+								>60%</span
+							></label
+						>
+						<input
+							type="range"
+							class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-red-500 dark:bg-zinc-800"
+							min="0"
+							max="100"
+							step="1"
+							value="60"
+							id="prob" />
+					</div>
+					<div class="w-72 whitespace-nowrap">
+						<label
+							for="model"
+							class="block text-sm font-medium mb-1 whitespace-nowrap"
+							>Probability model:</label
+						>
+						<select
+							id="model"
+							class="w-full rounded-lg border border-border bg-white dark:bg-zinc-800 dark:border-zinc-700 px-2 py-1 text-sm">
+							<option value="binomial">Binomial</option>
+							<option value="exponential">Exponential decay</option>
+							<option value="poisson">Poisson</option>
+							<option value="uniform">Uniform</option>
+						</select>
+					</div>
+				</form>
+				<div class="flex flex-col md:flex-row gap-6 items-start justify-center">
+					<div
+						id="chart-container"
+						class="flex-[2] min-w-0 bg-white dark:bg-zinc-900 border border-border rounded-lg shadow-lg dark:border-zinc-800 p-2 flex flex-col justify-center">
+						<h4 class="mb-2 text-lg font-semibold">Probabilities of the result for each possible move</h4>
+						<canvas
+							id="myChart"
+							width="700"
+							height="320"></canvas>
+					</div>
+					<div
+						id="y-prob-container"
+						class="flex-1 min-w-0 bg-white dark:bg-zinc-900 border border-border rounded-lg shadow-lg dark:border-zinc-800 p-2 flex flex-col justify-center">
+						<h4 class="mb-2 text-lg font-semibold">Probability Blocker takes n items</h4>
+						<canvas
+							id="yProbChart"
+							width="350"
+							height="320"></canvas>
+					</div>
+				</div>
+				<h3
+					class="mt-6 text-base font-medium text-lime-700 dark:text-lime-300 bg-lime-100 dark:bg-lime-900/30 rounded-lg px-4 py-2 inline-block shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-300 hover:bg-lime-200 dark:hover:bg-lime-800/40 mx-auto text-center"
+					id="legend"></h3>
+			</div>
+		</main>
+		<div class="fixed left-4 bottom-4 z-50 flex flex-row gap-x-2">
+			<button
+				id="dark-toggle"
+				class="cursor-pointer rounded-lg size-12 bg-gray-300 text-gray-700 shadow-lg hover:bg-gray-400 dark:bg-zinc-800 dark:text-gray-200 dark:hover:bg-zinc-700 flex items-center justify-center"
+				aria-label="Toggle Light/Dark mode">
+				<span
+					id="icon-sun"
+					style="display: none !important"
+					class="flex items-center justify-center size-8">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="lucide lucide-sun-icon lucide-sun">
+						<circle
+							cx="12"
+							cy="12"
+							r="4" />
+						<path d="M12 2v2" />
+						<path d="M12 20v2" />
+						<path d="m4.93 4.93 1.41 1.41" />
+						<path d="m17.66 17.66 1.41 1.41" />
+						<path d="M2 12h2" />
+						<path d="M20 12h2" />
+						<path d="m6.34 17.66-1.41 1.41" />
+						<path d="m19.07 4.93-1.41 1.41" />
+					</svg>
+				</span>
+				<span
+					id="icon-moon"
+					style="display: none !important"
+					class="flex items-center justify-center size-8">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="lucide lucide-moon-icon lucide-moon">
+						<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+					</svg>
+				</span>
+			</button>
+			<button
+				id="autoscale-toggle-btn"
+				type="button"
+				aria-label="Toggle Autoscale Y axis"
+				class="cursor-pointer rounded-lg height-12 px-2 bg-gray-300 text-gray-700 shadow-lg hover:bg-gray-400 dark:bg-zinc-800 dark:text-gray-200 dark:hover:bg-zinc-700 flex items-center justify-center"
+				title="Toggle autoscale for right graph">
+				<span
+					id="icon-autoscale-on"
+					class="flex items-center justify-center size-8">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="lucide lucide-bar-chart-3">
+						<path d="M3 3v18h18" />
+						<rect
+							x="13"
+							y="13"
+							width="4"
+							height="6"
+							rx="1" />
+						<rect
+							x="7"
+							y="9"
+							width="4"
+							height="10"
+							rx="1" />
+						<rect
+							x="17"
+							y="6"
+							width="4"
+							height="13"
+							rx="1" />
+					</svg>
+				</span>
+				<span
+					id="icon-autoscale-off"
+					class="flex items-center justify-center size-8"
+					style="display: none">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="lucide lucide-bar-chart-3-off">
+						<path d="M3 3v18h18" />
+						<rect
+							x="13"
+							y="13"
+							width="4"
+							height="6"
+							rx="1" />
+						<rect
+							x="7"
+							y="9"
+							width="4"
+							height="10"
+							rx="1" />
+						<rect
+							x="17"
+							y="6"
+							width="4"
+							height="13"
+							rx="1" />
+						<line
+							x1="2"
+							y1="2"
+							x2="22"
+							y2="22"
+							stroke="red"
+							stroke-width="2" />
+					</svg>
+				</span>
+				<span class="ml-2">Autoscale Y axis</span>
+			</button>
+		</div>
+		<div class="fixed right-4 bottom-4 z-50 flex flex-row gap-x-2">
+			<button
+				id="info-toggle"
+				class="cursor-pointer rounded-lg size-12 bg-gray-300 text-gray-700 shadow-lg hover:bg-gray-400 dark:bg-zinc-800 dark:text-gray-200 dark:hover:bg-zinc-700 flex items-center justify-center"
+				aria-label="Show Info">
+				<span class="flex items-center justify-center size-8">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="lucide lucide-info">
+						<circle
+							cx="12"
+							cy="12"
+							r="10" />
+						<line
+							x1="12"
+							y1="16"
+							x2="12"
+							y2="12" />
+						<line
+							x1="12"
+							y1="8"
+							x2="12.01"
+							y2="8" />
+					</svg>
+				</span>
+			</button>
+		</div>
+		<div
+			id="info-modal"
+			class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-150 overflow-hidden">
+			<div
+				class="bg-white dark:bg-zinc-900 rounded-xl shadow-2xl border border-border dark:border-zinc-800 md:max-w-4/5 max-h-7/8 w-min p-8 relative flex flex-col items-center animate-in fade-in zoom-in-95 opacity-0 scale-95 transition-all duration-150 overflow-y-auto"
+				style="will-change: opacity, transform">
+				<button
+					id="info-modal-close"
+					class="cursor-pointer absolute top-4 right-4 rounded-full p-2 bg-gray-200 dark:bg-zinc-800 hover:bg-gray-300 dark:hover:bg-zinc-700 text-gray-700 dark:text-gray-200"
+					aria-label="Close Info Modal">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="20"
+						height="20"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+						stroke-width="2">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+				<h2 class="text-xl font-semibold mb-2">About</h2>
+				<p class="mb-4 text-gray-700 dark:text-gray-200 text-justify">
+					This tool analyzes the probabilities of winning for the <span class="font-semibold">Snaker</span> in
+					the game <span class="font-semibold">Shoot the Gap</span> from
+					<span class="font-semibold">JetLag: The Game</span>, Season 14, Episode 3.
+				</p>
+				<h2 class="text-xl font-semibold mb-2">Rules of the Game</h2>
+				<p class="mb-4 text-gray-700 dark:text-gray-200 text-justify">
+					The game is played by three players: one <span class="font-semibold">Snaker</span> and two
+					<span class="font-semibold">Blockers</span>. Each player may collect any number of items. The winner
+					is the player who collects the <span class="font-semibold">middle</span> number of items. Blockers
+					aren not allowed to strategize.
+				</p>
+				<p class="mb-4 text-gray-700 dark:text-gray-200 text-justify">
+					If there is an ambiguous tie (for example, all three players collect the same number of items, or
+					all collect different numbers but two tie for the middle), we assume this to be a tie (as this was
+					not explained in the episode). If the Snaker ties with a Blocker and the other Blocker has a
+					different number, this is considered a loss for the Snaker.
+				</p>
+				<p class="mb-4 text-gray-700 dark:text-gray-200 text-justify">
+					Blockers can maximize their chances by minimizing the gap between the numbers of items they collect.
+					The optimal scenario for the Blockers is to collect the same number of items; in this case, the best
+					possible outcome for the Snaker is a tie, if they also match that number.
+				</p>
+				<div
+					class="grid grid-cols-1 lg:grid-cols-2 gap-4 w-max items-center-safe justify-center-safe max-w-full">
+					<div
+						class="bg-lime-100 dark:bg-lime-900/30 rounded-lg p-3 shadow flex flex-col items-center border border-lime-300 dark:border-lime-700">
+						<div class="flex gap-2 items-center mb-1">
+							<span class="text-2xl font-bold text-lime-700 dark:text-lime-300">Win</span>
+							<svg
+								width="28"
+								height="28"
+								fill="none"
+								viewBox="0 0 24 24"
+								class="inline-block">
+								<circle
+									cx="12"
+									cy="12"
+									r="10"
+									fill="#84cc16" />
+								<path
+									d="M8 12.5l2.5 2.5 5-5"
+									stroke="#fff"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round" />
+							</svg>
+						</div>
+						<div class="flex gap-2 items-center">
+							<span class="rounded px-2 py-0.5 bg-zinc-600/10 dark:bg-gray-200/10"
+								>Blocker - <span class="font-bold">7</span></span
+							>
+							<span
+								class="rounded px-2 py-0.5 bg-zinc-600/25 dark:bg-gray-200/25 border border-zinc-600/30 dark:border-zinc-200/30"
+								>Snaker -
+								<span
+									class="text-shadow-l text-shadow-current font-bold text-lime-700 dark:text-lime-300"
+									>8</span
+								></span
+							>
+							<span class="rounded px-2 py-0.5 bg-zinc-600/10 dark:bg-gray-200/10"
+								>Blocker - <span class="font-bold">10</span></span
+							>
+						</div>
+						<div class="mt-1 text-sm text-gray-700 dark:text-gray-300 text-center">
+							The Snaker wins by collecting the middle amount.
+						</div>
+					</div>
+					<div
+						class="bg-yellow-100 dark:bg-yellow-900/30 rounded-lg p-3 shadow flex flex-col items-center border border-yellow-300 dark:border-yellow-700">
+						<div class="flex gap-2 items-center mb-1">
+							<span class="text-2xl font-bold text-yellow-700 dark:text-yellow-300">Tie</span>
+							<svg
+								width="28"
+								height="28"
+								fill="none"
+								viewBox="-2 -2 26 26"
+								class="inline-block">
+								<circle
+									cx="12"
+									cy="12"
+									r="11.66"
+									fill="#facc15" />
+								<path
+									d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round" />
+								<path
+									d="M12 17h.01"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round" />
+							</svg>
+						</div>
+						<div class="flex gap-2 items-center">
+							<span
+								class="rounded px-2 py-0.5 bg-zinc-600/25 dark:bg-gray-200/25 border border-zinc-600/30 dark:border-zinc-200/30"
+								>Snaker -
+								<span
+									class="text-shadow-l text-shadow-current font-bold text-yellow-700 dark:text-yellow-300"
+									>7</span
+								></span
+							>
+							<span class="rounded px-2 py-0.5 bg-zinc-600/10 dark:bg-gray-200/10"
+								>Blocker - <span class="font-bold text-yellow-700 dark:text-yellow-300">7</span></span
+							>
+							<span class="rounded px-2 py-0.5 bg-zinc-600/10 dark:bg-gray-200/10"
+								>Blocker - <span class="font-bold">8</span></span
+							>
+						</div>
+						<div class="mt-1 text-sm text-gray-700 dark:text-gray-300 text-center">
+							The Snaker has tied with a Blocker
+						</div>
+					</div>
+					<div
+						class="bg-red-100 dark:bg-red-900/30 rounded-lg p-3 shadow flex flex-col items-center border border-red-300 dark:border-red-700">
+						<div class="flex gap-2 items-center mb-1">
+							<span class="text-2xl font-bold text-red-700 dark:text-red-300">Loss</span>
+							<svg
+								width="28"
+								height="28"
+								fill="none"
+								viewBox="0 0 24 24"
+								class="inline-block">
+								<circle
+									cx="12"
+									cy="12"
+									r="10"
+									fill="#ef4444" />
+								<path
+									d="M9 9l6 6M15 9l-6 6"
+									stroke="#fff"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round" />
+							</svg>
+						</div>
+						<div class="flex gap-2 items-center">
+							<span
+								class="rounded px-2 py-0.5 bg-zinc-600/25 dark:bg-gray-200/25 border border-zinc-600/30 dark:border-zinc-200/30"
+								>Snaker -
+								<span class="text-shadow-l text-shadow-current font-bold text-red-700 dark:text-red-300"
+									>7</span
+								></span
+							>
+							<span class="rounded px-2 py-0.5 bg-zinc-600/10 dark:bg-gray-200/10"
+								>Blocker - <span class="font-bold">10</span></span
+							>
+							<span class="rounded px-2 py-0.5 bg-zinc-600/10 dark:bg-gray-200/10"
+								>Blocker - <span class="font-bold">12</span></span
+							>
+						</div>
+						<div class="mt-1 text-sm text-gray-700 dark:text-gray-300 text-center">
+							Snaker loses; does not have the middle amount.
+						</div>
+					</div>
+					<div
+						class="bg-red-100 dark:bg-red-900/30 rounded-lg p-3 shadow flex flex-col items-center border border-red-300 dark:border-red-700">
+						<div class="flex gap-2 items-center mb-1">
+							<span class="text-2xl font-bold text-red-700 dark:text-red-300">Loss</span>
+							<svg
+								width="28"
+								height="28"
+								fill="none"
+								viewBox="0 0 24 24"
+								class="inline-block">
+								<circle
+									cx="12"
+									cy="12"
+									r="10"
+									fill="#ef4444" />
+								<path
+									d="M9 9l6 6M15 9l-6 6"
+									stroke="#fff"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round" />
+							</svg>
+						</div>
+						<div class="flex gap-2 items-center">
+							<span class="rounded px-2 py-0.5 bg-zinc-600/10 dark:bg-gray-200/10"
+								>Blocker - <span class="font-bold text-yellow-700 dark:text-yellow-300">10</span></span
+							>
+							<span class="rounded px-2 py-0.5 bg-zinc-600/10 dark:bg-gray-200/10"
+								>Blocker - <span class="font-bold text-yellow-700 dark:text-yellow-300">10</span></span
+							>
+							<span
+								class="rounded px-2 py-0.5 bg-zinc-600/25 dark:bg-gray-200/25 border border-zinc-600/30 dark:border-zinc-200/30"
+								>Snaker -
+								<span class="text-shadow-l text-shadow-current font-bold text-red-700 dark:text-red-300"
+									>12</span
+								></span
+							>
+						</div>
+						<div class="mt-1 text-sm text-gray-700 dark:text-gray-300 text-center">
+							Special case of a tie, where the Snaker still loses.
+						</div>
+					</div>
+				</div>
+				<p class="text-gray-400 dark:text-gray-500 text-center mt-6">
+					<a
+						href="https://github.com/k0stka/JetLagShootTheGap"
+						target="_blank"
+						rel="noopener"
+						class="underline hover:text-red-500 dark:hover:text-red-400 flex items-center justify-center gap-1">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							fill="currentColor"
+							class="inline-block align-middle"
+							viewBox="0 0 24 24"
+							aria-hidden="true">
+							<path
+								d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.339-2.221-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.987 1.029-2.687-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.295 2.748-1.025 2.748-1.025.546 1.378.203 2.397.1 2.65.64.7 1.028 1.594 1.028 2.687 0 3.847-2.337 4.695-4.566 4.944.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.749 0 .268.18.579.688.481C19.138 20.2 22 16.448 22 12.021 22 6.484 17.523 2 12 2Z" />
+						</svg>
+						Github
+					</a>
+				</p>
+			</div>
+		</div>
+	</body>
 </html>
