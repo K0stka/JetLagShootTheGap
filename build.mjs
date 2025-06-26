@@ -32,8 +32,9 @@ const htmlOutPath = path.join("dist", "index.html");
 let htmlCode = fs.readFileSync(htmlPath, "utf8");
 
 // Update imports
-htmlCode = htmlCode.replace("../dist/bundle.css", "bundle.css");
-htmlCode = htmlCode.replace("js/index.js", "bundle.js");
+htmlCode = htmlCode.replace("../dist/bundle.css", "bundle.css?v=" + Date.now());
+htmlCode = htmlCode.replace("index.css", "index.css?v=" + Date.now());
+htmlCode = htmlCode.replace("js/index.js", "bundle.js?v=" + Date.now());
 
 const minifiedHtml = await htmlMinifier.minify(htmlCode, {
 	collapseWhitespace: true,
