@@ -1,6 +1,8 @@
-// UI and theme logic for JetLagS14 SPA
+// UI and theme logic for JetLag: Shoot the Gap SPA
+// Handles dark/light mode and the info modal (which contains the game rules and description)
 
 export function initializeUI() {
+	// --- Theme toggle logic ---
 	const toggle = document.getElementById("dark-toggle");
 	const iconSun = document.getElementById("icon-sun");
 	const iconMoon = document.getElementById("icon-moon");
@@ -20,6 +22,7 @@ export function initializeUI() {
 	});
 
 	// --- Info Button and Modal ---
+	// Shows the modal with the game rules and explanation (see index.html)
 	const infoBtn = document.getElementById("info-toggle");
 	const infoModal = document.getElementById("info-modal");
 	const infoModalClose = document.getElementById("info-modal-close");

@@ -1,7 +1,10 @@
-// Chart logic for JetLagS14 SPA
-
+// Chart logic for JetLag: Shoot the Gap SPA
+// Visualizes the win/draw/loss probabilities for the Snaker and the Blocker probability distribution
+// Left chart: For each possible Snaker move, shows the chance of winning, drawing, or losing (middle value logic)
+// Right chart: Shows the probability distribution for a single Blocker (how likely they are to collect n items)
 import { calculateResults, yPlayerProbabilities } from "./probability.js";
 
+// Update the main chart with new win/draw/lose data for the Snaker
 export function updateChart(chart, SIZE, PROB, model) {
 	const { win, draw, lose } = calculateResults(SIZE, PROB, model);
 	chart.data.labels = Array.from({ length: win.length }, (_, i) => i);
@@ -12,6 +15,7 @@ export function updateChart(chart, SIZE, PROB, model) {
 	updateLegend(win, draw);
 }
 
+// Update the legend to show the best move for the Snaker (highest win%, then draw%)
 export function updateLegend(winArr, drawArr) {
 	let maxWin = -1,
 		maxDraw = -1,
@@ -30,6 +34,7 @@ export function updateLegend(winArr, drawArr) {
 	)}%</b> and draw percentage of <b>${maxDraw.toFixed(2)}%</b>`;
 }
 
+// Create the main chart (left): win/draw/lose for each Snaker move
 export function createMainChart(ctx, win, draw, lose) {
 	return new Chart(ctx, {
 		type: "line",
@@ -97,6 +102,7 @@ export function createMainChart(ctx, win, draw, lose) {
 	});
 }
 
+// Create or update the Blocker probability chart (right): shows the distribution for a single Blocker
 export function createOrUpdateYProbChart(yProbChart, SIZE, PROB, model, AUTOSCALE_Y_PROB_CHART) {
 	const yProb = yPlayerProbabilities(SIZE, PROB, model);
 	const maxY = Math.max(...yProb);

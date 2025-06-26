@@ -1,16 +1,19 @@
-// JetLagS14 SPA logic for browser
+// JetLag: Shoot the Gap SPA main logic
+// Handles app initialization, user input, and updates the charts/UI based on the game rules described in index.html
 
 import { createMainChart, createOrUpdateYProbChart, updateChart, updateLegend } from "./chart.js";
-
 import { calculateResults } from "./probability.js";
 import { initializeUI } from "./ui.js";
 
 // --- State ---
+// PROB_MODEL: which probability model to use for Blocker/Snaker item collection
 let PROB_MODEL = "poisson"; // "binomial", "exponential", "poisson", "uniform"
-let AUTOSCALE_Y_PROB_CHART = true; // Set to false to disable autoscaling of the yProbChart
+// AUTOSCALE_Y_PROB_CHART: whether to autoscale the Blocker probability chart (right)
+let AUTOSCALE_Y_PROB_CHART = true;
 
 // --- Main App Initialization ---
 window.addEventListener("DOMContentLoaded", () => {
+	// Get references to UI elements
 	const sizeInput = document.getElementById("size");
 	const probInput = document.getElementById("prob");
 	const sizeValue = document.getElementById("size-value");
@@ -37,7 +40,8 @@ window.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
-	// Helper to update range UI and label for selected model
+	// Helper to update range UI and label for selected probability model
+	// This lets the user select the number of items and probability, depending on the model
 	function updateRangeUI(model) {
 		if (model === "binomial") {
 			sizeInput.min = 5;
@@ -83,16 +87,21 @@ window.addEventListener("DOMContentLoaded", () => {
 		probValue.textContent = probInput.value + "%";
 	}
 
+	// Initial values for number of items and probability
 	let SIZE = parseInt(sizeInput.value, 10);
 	let PROB = parseFloat(probInput.value) / 100;
 
+	// Calculate initial win/draw/lose probabilities for the Snaker
 	const { win, draw, lose } = calculateResults(SIZE, PROB, PROB_MODEL);
+	// Create the main chart (left)
 	const ctx = document.getElementById("myChart").getContext("2d");
 	const chart = createMainChart(ctx, win, draw, lose);
 
+	// Create the Blocker probability chart (right)
 	const yProbChart = {};
 	createOrUpdateYProbChart(yProbChart, SIZE, PROB, PROB_MODEL, AUTOSCALE_Y_PROB_CHART);
 
+	// Update charts and UI when user changes the number of items
 	sizeInput.addEventListener("input", function () {
 		SIZE = parseInt(this.value, 10);
 		PROB = parseFloat(probInput.value) / 100;
@@ -100,6 +109,7 @@ window.addEventListener("DOMContentLoaded", () => {
 		sizeValue.textContent = this.value;
 		createOrUpdateYProbChart(yProbChart, SIZE, PROB, PROB_MODEL, AUTOSCALE_Y_PROB_CHART);
 	});
+	// Update charts and UI when user changes the probability
 	probInput.addEventListener("input", function () {
 		SIZE = parseInt(sizeInput.value, 10);
 		PROB = parseFloat(this.value) / 100;
@@ -107,6 +117,7 @@ window.addEventListener("DOMContentLoaded", () => {
 		probValue.textContent = this.value + "%";
 		createOrUpdateYProbChart(yProbChart, SIZE, PROB, PROB_MODEL, AUTOSCALE_Y_PROB_CHART);
 	});
+	// Update charts and UI when user changes the probability model
 	modelSelect.addEventListener("change", function () {
 		PROB_MODEL = this.value;
 		updateRangeUI(PROB_MODEL);
@@ -116,7 +127,9 @@ window.addEventListener("DOMContentLoaded", () => {
 		createOrUpdateYProbChart(yProbChart, SIZE, PROB, PROB_MODEL, AUTOSCALE_Y_PROB_CHART);
 	});
 
+	// Set up initial UI state
 	updateRangeUI(PROB_MODEL);
 	updateLegend(win, draw);
+	// Initialize theme and info modal (see ui.js)
 	initializeUI();
 });
