@@ -35,6 +35,7 @@ let htmlCode = fs.readFileSync(htmlPath, "utf8");
 htmlCode = htmlCode.replace("../dist/bundle.css", "bundle.css?v=" + Date.now());
 htmlCode = htmlCode.replace("index.css", "index.css?v=" + Date.now());
 htmlCode = htmlCode.replace("js/index.js", "bundle.js?v=" + Date.now());
+htmlCode = htmlCode.replace("../assets/favicon.ico", "favicon.ico?v=" + Date.now());
 
 const minifiedHtml = await htmlMinifier.minify(htmlCode, {
 	collapseWhitespace: true,
@@ -46,3 +47,11 @@ const minifiedHtml = await htmlMinifier.minify(htmlCode, {
 fs.mkdirSync(path.dirname(htmlOutPath), { recursive: true });
 fs.writeFileSync(htmlOutPath, minifiedHtml, "utf8");
 console.log("Minified HTML written to", htmlOutPath);
+
+// Copy favicon
+const faviconSrc = path.join("assets", "favicon.ico");
+const faviconDest = path.join("dist", "favicon.ico");
+if (fs.existsSync(faviconSrc)) {
+	fs.copyFileSync(faviconSrc, faviconDest);
+	console.log("Copied favicon to", faviconDest);
+}
